@@ -185,7 +185,7 @@ class CallbackView(BrowserView):
         if isinstance(resp, AccessTokenResponse):
             # If it’s an AccessTokenResponse the information in the response will be stored in the
             # client instance with state as the key for future use.
-            if client.userinfo_endpoint:
+            if False: # XXX client.userinfo_endpoint:
                 # https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
 
                 # XXX: Not completely sure if this is even needed
@@ -200,8 +200,9 @@ class CallbackView(BrowserView):
             else:
                 userinfo = resp.to_dict().get("id_token", {})
 
+            logger.info("authentication information from ms %s \n\n %s", resp, userinfo)
             # userinfo in an instance of OpenIDSchema or ErrorResponse
-            if isinstance(userinfo, OpenIDSchema):
+            if True: # XXX isinstance(userinfo, OpenIDSchema):
                 self.context.rememberIdentity(userinfo)
                 self.request.response.setHeader(
                     "Cache-Control", "no-cache, must-revalidate"

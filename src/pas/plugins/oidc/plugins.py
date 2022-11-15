@@ -102,11 +102,15 @@ class OIDCPlugin(BasePlugin):
     )
 
     def rememberIdentity(self, userinfo):
-        assert isinstance(userinfo, OpenIDSchema)
+        # XXX assert isinstance(userinfo, OpenIDSchema)
         # sub: machine-readable identifier of the user at this server;
         #      this value is guaranteed to be unique per user, stable over time,
         #      and never re-used
-        user_id = userinfo["sub"]
+        # user_id = userinfo["sub"]
+        # XXX override user_id and add email
+        user_id = userinfo["upn"]
+        if 'email' not in user_id:
+            userinfo['email'] = user_id
         # TODO: configurare userinfo/plone mapping
         pas = self._getPAS()
         if pas is None:
