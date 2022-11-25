@@ -1,0 +1,11 @@
+<registry>
+  <record name="pas.plugins.oidc.valid_tenants">
+      <field type="plone.registry.field.Tuple">
+          <title>Valid tenants</title>
+          <description>A list of valid tenants (mainly used by AzureAD Multi Tenant Applications)</description>
+          <value_type type="plone.registry.field.TextLine" />
+      </field>
+      <value>
+      </value>
+  </record>
+</registry>

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from App.special_dtml import DTMLFile
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from contextlib import contextmanager
@@ -107,10 +108,15 @@ class OIDCPlugin(BasePlugin):
         #      this value is guaranteed to be unique per user, stable over time,
         #      and never re-used
         # user_id = userinfo["sub"]
+
         # XXX override user_id and add email
-        user_id = userinfo["upn"]
+        # user_id = userinfo["upn"]
+        # UPN is wrong for user guest tenant
+        user_id = userinfo['unique_name']
+        
         if 'email' not in user_id:
             userinfo['email'] = user_id
+
         # TODO: configurare userinfo/plone mapping
         pas = self._getPAS()
         if pas is None:
@@ -230,6 +236,10 @@ class OIDCPlugin(BasePlugin):
     # TODO: memoize (?)
     def get_oauth2_client(self):
         client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
+        # XXX XXX
+        if 'common' in  self.getProperty('issuer'):
+            client.allow['issuer_mismatch'] = True
+        # XXX XXX
         # registration_response = client.register(provider_info["registration_endpoint"], redirect_uris=...)
         # ... oic.exception.RegistrationError: {'error': 'insufficient_scope',
         #     'error_description': "Policy 'Trusted Hosts' rejected request to client-registration service. Details: Host not trusted."}
@@ -272,10 +282,19 @@ classImplements(
 )
 
 
-def add_oidc_plugin():
-    # Form for manually adding our plugin.
-    # But we do this in setuphandlers.py always.
-    pass
+def add_oidc_plugin(self, id, title='', RESPONSE=None):
+    """
+    this is a doc string
+    """
+    oidc = OIDCPlugin(id, title)
+    self._setObject(oidc.getId(), oidc)
+
+    if RESPONSE is not None:
+        RESPONSE.redirect('manage_workspace')
+
+add_oidc_plugin_form = DTMLFile(
+    './zmi/OIDCPluginForm', globals())
+
 
 
 # https://github.com/collective/Products.AutoUserMakerPASPlugin/blob/master/Products/AutoUserMakerPASPlugin/auth.py

@@ -10,6 +10,7 @@ from plone import api
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from zExceptions import Unauthorized
+from plone import api
 
 import base64
 import json
@@ -156,6 +157,7 @@ class CallbackView(BrowserView):
         )
         # XXX: togliere debug e reinserire assert dopo aver trovato eventuali
         # anomalie
+        logger.info("DEBUG %s", aresp)
         logger.info("DEBUG %s %s", aresp.get("state"), session.get("state"))
         # assert aresp["state"] == session.get("state")
         args = {
@@ -174,8 +176,20 @@ class CallbackView(BrowserView):
                 }
             )
 
-        # The response you get back is an instance of an AccessTokenResponse
-        # or again possibly an ErrorResponse instance.
+        # nel caso di issuer common multitenante MS Azure
+        # aggiungiamo i tenant qui (anche se non credo sia la soluzione corretta)
+        if self.context.getProperty('issuer') == "https://login.microsoftonline.com/common/":
+            azure_tenants = api.portal.get_registry_record('pas.plugins.oidc.valid_tenants', default=[])
+            # TODO: se riimane questo approccio vanno spostati in configurazione
+            # for tenant in [
+            #     "https://sts.windows.net/db8af6f3-fd5c-4482-80b8-72a86b4a106c/",  # @comune.parma.it @lacasadellamusica.it
+            #     "https://sts.windows.net/e07592e5-7ed4-479e-ba96-3e00066a203c/",  # @itcity.it
+            #     "https://sts.windows.net/bbc009d3-01b9-428b-a83b-e8611a3aef8d/",  # Scuole Nidi e dell'infanzia @scuole.comune.parma.it
+            # ]:
+            for tenant in azure_tenants:
+               logger.info("add %s to %s %s", tenant, self.context.getProperty('issuer'), client.provider_info)
+               client.keyjar.load_keys(client.provider_info, tenant)
+           
         resp = client.do_access_token_request(
             state=aresp["state"],
             request_args=args,

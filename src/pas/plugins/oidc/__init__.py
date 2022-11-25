@@ -5,6 +5,7 @@ from Products.PluggableAuthService.PluggableAuthService import (  # noqa
     registerMultiPlugin,
 )
 from zope.i18nmessageid import MessageFactory
+from . import azuread_monkey
 
 
 _ = MessageFactory("pas.plugins.oidc")
@@ -19,6 +20,9 @@ def initialize(context):  # pragma: no cover
     context.registerClass(
         plugins.OIDCPlugin,
         permission=ManageUsers,
-        constructors=(plugins.add_oidc_plugin,),
+        constructors=(
+            plugins.add_oidc_plugin_form,
+            plugins.add_oidc_plugin,
+        ),
         # icon='www/PluggableAuthService.png',
     )
