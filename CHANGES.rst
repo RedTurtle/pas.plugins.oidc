@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.0a4 (unreleased)
-------------------
+1.0a4_pr_fixes (2022-11-29)
+---------------------------
 
 - use getProperty accessor
   [mamico]
