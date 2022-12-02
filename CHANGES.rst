@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+1.0a6_pr_fixes (unreleased)
+---------------------------
+
+- Nothing changed yet.
+
+
 1.0a5_pr_fiexes (2022-12-02)
 ----------------------------
 
