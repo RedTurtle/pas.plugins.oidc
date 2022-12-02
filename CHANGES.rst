@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.0a5_pr_fiexes.dev0 (unreleased)
----------------------------------
+1.0a5_pr_fiexes (2022-12-02)
+----------------------------
 
 - Try to fix some strange email address from azureAD.
   [lucabel]
