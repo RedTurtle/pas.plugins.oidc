@@ -113,9 +113,14 @@ class OIDCPlugin(BasePlugin):
         # user_id = userinfo["upn"]
         # UPN is wrong for user guest tenant
         user_id = userinfo['unique_name']
-        
-        if 'email' not in user_id:
-            userinfo['email'] = user_id
+        # as far as we know we could have address
+        # like xxx#name.someothername@gmail.com
+        if 'email' not in userinfo:
+            if '#' in user_id:
+                email = user_id.split('#')[1]
+                userinfo['email'] = email
+            else:
+                userinfo['email'] = user_id
 
         # TODO: configurare userinfo/plone mapping
         pas = self._getPAS()
